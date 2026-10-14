@@ -1,0 +1,6 @@
+# Cathode defaults (system-wide; users can still change them)
+[KDE]
+# no animations: windows open and close instantly, like 1998
+AnimationDurationFactor=0
+# double-click to open files, Windows 98 style
+SingleClick=false

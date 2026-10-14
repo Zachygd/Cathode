@@ -1,0 +1,4 @@
+# Cathode: no Plasma splash screen after login
+[KSplash]
+Engine=none
+Theme=None

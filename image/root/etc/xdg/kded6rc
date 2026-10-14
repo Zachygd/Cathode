@@ -1,0 +1,7 @@
+# Cathode: background modules we don't need
+[Module-browserintegrationreminder]
+autoload=false
+[Module-plasma-welcome]
+autoload=false
+[Module-donationmessage]
+autoload=false

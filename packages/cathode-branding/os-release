@@ -1,0 +1,14 @@
+NAME="Cathode"
+VERSION="44 (Phase 1)"
+ID=fedora
+VERSION_ID=44
+VERSION_CODENAME=""
+PLATFORM_ID="platform:f44"
+PRETTY_NAME="Cathode 44"
+ANSI_COLOR="0;36"
+LOGO=generic-logo-icon
+CPE_NAME="cpe:/o:fedoraproject:fedora:44"
+DEFAULT_HOSTNAME="cathode"
+HOME_URL="https://github.com/Zachygd/cathode"
+VARIANT="Cathode"
+VARIANT_ID=cathode

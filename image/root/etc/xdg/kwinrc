@@ -1,0 +1,21 @@
+# Cathode: a plain, fast compositor. No wobbly, no blur, no fades.
+[Plugins]
+blurEnabled=false
+contrastEnabled=false
+slidingpopupsEnabled=false
+fadingpopupsEnabled=false
+scaleEnabled=false
+squashEnabled=false
+dimscreenEnabled=false
+kwin4_effect_maximizeEnabled=false
+kwin4_effect_fadeEnabled=false
+kwin4_effect_scaleEnabled=false
+windowapertureEnabled=false
+desktopchangeosdEnabled=false
+overviewEnabled=false
+
+[Effect-overview]
+BorderActivate=9
+
+[Windows]
+FocusPolicy=ClickToFocus

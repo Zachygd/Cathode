@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cathode - a Windows 98-style "sleeper" desktop on a modern Fedora base.
+  Phase 1: the stripped-down base system (Plasma 6 on Wayland, HDR-capable,
+  NVIDIA, Steam). Built with KIWI; see tools/build-image.sh.
+
+  @CATHODE_LOCAL_REPO@ is replaced by tools/build-image.sh with the path of
+  the local repository holding Cathode's own RPMs (cathode-branding, ...).
+-->
+<image schemaversion="8.0" name="Cathode" displayname="Cathode">
+    <description type="system">
+        <author>Zach</author>
+        <contact>https://github.com/Zachygd</contact>
+        <specification>Cathode 44 live/installer ISO (x86_64)</specification>
+    </description>
+
+    <preferences>
+        <version>44.1.0</version>
+        <packagemanager>dnf5</packagemanager>
+        <locale>en_US</locale>
+        <keytable>us</keytable>
+        <timezone>America/New_York</timezone>
+        <rpm-excludedocs>false</rpm-excludedocs>
+        <rpm-check-signatures>true</rpm-check-signatures>
+        <bootsplash-theme>bgrt</bootsplash-theme>
+        <!-- dmsquash = Fedora's standard live layout, which Anaconda's
+             live installer expects -->
+        <type image="iso" primary="true" flags="dmsquash"
+              firmware="uefi" mediacheck="false"
+              volid="Cathode-44" publisher="Cathode" application_id="Cathode 44"
+              selinux_policy="targeted"
+              kernelcmdline="rhgb quiet rd.live.image">
+            <bootloader name="grub2" console="gfxterm" timeout="10"/>
+        </type>
+    </preferences>
+
+    <!-- ===================================================== repositories -->
+    <repository type="rpm-md" alias="fedora" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.fedoraproject.org/metalink?repo=fedora-44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-44-x86_64"/>
+        </source>
+    </repository>
+    <repository type="rpm-md" alias="updates" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.fedoraproject.org/metalink?repo=updates-released-f44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-44-x86_64"/>
+        </source>
+    </repository>
+    <repository type="rpm-md" alias="rpmfusion-free" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.rpmfusion.org/metalink?repo=free-fedora-44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-2020"/>
+        </source>
+    </repository>
+    <repository type="rpm-md" alias="rpmfusion-free-updates" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.rpmfusion.org/metalink?repo=free-fedora-updates-released-44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-free-fedora-2020"/>
+        </source>
+    </repository>
+    <repository type="rpm-md" alias="rpmfusion-nonfree" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-2020"/>
+        </source>
+    </repository>
+    <repository type="rpm-md" alias="rpmfusion-nonfree-updates" sourcetype="metalink" imageinclude="false">
+        <source path="https://mirrors.rpmfusion.org/metalink?repo=nonfree-fedora-updates-released-44&amp;arch=x86_64">
+            <signing key="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rpmfusion-nonfree-fedora-2020"/>
+        </source>
+    </repository>
+    <!-- Cathode's own packages, built locally by tools/build-rpms.sh -->
+    <repository type="rpm-md" alias="cathode-local" priority="1" package_gpgcheck="false" imageinclude="false">
+        <source path="dir://@CATHODE_LOCAL_REPO@"/>
+    </repository>
+
+    <!-- ======================================================= bootstrap -->
+    <packages type="bootstrap">
+        <package name="filesystem"/>
+        <package name="basesystem"/>
+        <package name="setup"/>
+        <package name="fedora-release-kde"/>
+        <package name="glibc-langpack-en"/>
+    </packages>
+
+    <!-- ========================================================== system -->
+    <packages type="image">
+        <!-- base OS -->
+        <namedCollection name="core"/>
+        <package name="kernel"/>
+        <package name="kernel-modules"/>
+        <package name="kernel-modules-extra"/>
+        <package name="dracut-live"/>
+        <package name="grub2-efi-x64"/>
+        <package name="grub2-efi-x64-cdboot"/>
+        <package name="shim-x64"/>
+        <package name="efibootmgr"/>
+        <package name="plymouth"/>
+        <package name="plymouth-system-theme"/>
+        <package name="plymouth-theme-spinner"/>
+        <package name="zram-generator-defaults"/>
+        <package name="systemd-oomd-defaults"/>
+        <package name="fwupd"/>
+        <package name="flatpak"/>
+        <package name="rpmfusion-free-release"/>
+        <package name="rpmfusion-nonfree-release"/>
+
+        <!-- Cathode branding (replaces Fedora's trademarked logos) -->
+        <package name="cathode-branding"/>
+        <package name="generic-logos"/>
+
+        <!-- firmware for the Legion Slim 7 and laptops like it -->
+        <package name="linux-firmware"/>
+        <package name="alsa-sof-firmware"/>
+        <package name="iwlwifi-mvm-firmware"/>
+        <package name="intel-gpu-firmware"/>
+        <package name="nvidia-gpu-firmware"/>
+
+        <!-- hardware services -->
+        <package name="NetworkManager-wifi"/>
+        <package name="NetworkManager-bluetooth"/>
+        <package name="bluez"/>
+        <package name="pipewire"/>
+        <package name="pipewire-pulseaudio"/>
+        <package name="pipewire-alsa"/>
+        <package name="wireplumber"/>
+        <package name="power-profiles-daemon"/>
+        <package name="upower"/>
+        <package name="cups-filters"/>
+
+        <!-- desktop: a lean Plasma 6 Wayland session, nothing extra -->
+        <package name="sddm"/>
+        <package name="sddm-wayland-plasma"/>
+        <package name="sddm-kcm"/>
+        <package name="plasma-workspace"/>
+        <package name="plasma-desktop"/>
+        <package name="kwin"/>
+        <package name="kscreen"/>
+        <package name="plasma-nm"/>
+        <package name="plasma-pa"/>
+        <package name="powerdevil"/>
+        <package name="bluedevil"/>
+        <package name="kde-gtk-config"/>
+        <package name="xdg-desktop-portal-kde"/>
+        <package name="polkit-kde"/>
+        <package name="kwallet-pam"/>
+        <package name="systemsettings"/>
+        <package name="kinfocenter"/>
+        <package name="kmenuedit"/>
+        <package name="spectacle"/>
+        <package name="xorg-x11-server-Xwayland"/>
+        <package name="qt6-qtwayland"/>
+        <package name="breeze-icon-theme"/>
+        <package name="breeze-cursor-theme"/>
+        <package name="google-noto-sans-fonts"/>
+        <package name="google-noto-sans-mono-fonts"/>
+        <package name="liberation-sans-fonts"/>
+
+        <!-- interim apps, replaced by Cathode's own in phase 3 -->
+        <package name="konsole"/>
+        <package name="pcmanfm-qt"/>
+        <package name="kwrite"/>
+
+        <!-- graphics + gaming -->
+        <package name="akmod-nvidia"/>
+        <package name="xorg-x11-drv-nvidia-cuda"/>
+        <package name="steam"/>
+        <package name="gamemode"/>
+        <package name="mesa-dri-drivers"/>
+        <package name="mesa-vulkan-drivers"/>
+        <package name="vulkan-loader"/>
+
+        <!-- live session + installer -->
+        <package name="livesys-scripts"/>
+        <package name="anaconda-live"/>
+
+        <!-- the "fluff" Cathode leaves out -->
+        <ignore name="fedora-logos"/>
+        <ignore name="fedora-logos-classic"/>
+        <ignore name="fedora-logos-httpd"/>
+        <ignore name="plasma-lookandfeel-fedora"/>
+        <ignore name="f44-backgrounds-kde"/>
+        <ignore name="f44-backgrounds-base"/>
+        <ignore name="desktop-backgrounds-compat"/>
+        <ignore name="plasma-discover"/>
+        <ignore name="plasma-discover-notifier"/>
+        <ignore name="kdeconnectd"/>
+        <ignore name="plasma-welcome"/>
+        <ignore name="plasma-browser-integration"/>
+        <ignore name="akonadi-server"/>
+        <ignore name="kde-connect"/>
+        <ignore name="abrt"/>
+        <ignore name="abrt-desktop"/>
+    </packages>
+</image>

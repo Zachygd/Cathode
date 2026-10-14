@@ -1,0 +1,20 @@
+#!/bin/bash
+# Runs once on the first boot of an installed Cathode system (never on the
+# live ISO). Makes sure the NVIDIA driver is built for the running kernel
+# and that the boot options the driver needs are set.
+set -u
+log() { echo "cathode-firstboot: $*"; logger -t cathode-firstboot "$*" 2>/dev/null || true; }
+
+if command -v akmods >/dev/null; then
+    log "building NVIDIA module for $(uname -r) if needed"
+    akmods --kernels "$(uname -r)" || log "akmods failed (see journalctl -u akmods)"
+fi
+
+if rpm -q akmod-nvidia >/dev/null 2>&1 && command -v grubby >/dev/null; then
+    log "setting NVIDIA boot options"
+    grubby --update-kernel=ALL --args="rd.driver.blacklist=nouveau modprobe.blacklist=nouveau nvidia-drm.modeset=1" || true
+fi
+
+mkdir -p /var/lib/cathode
+date > /var/lib/cathode/firstboot-done
+log "done"

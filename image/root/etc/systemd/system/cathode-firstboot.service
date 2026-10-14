@@ -1,0 +1,14 @@
+[Unit]
+Description=Cathode first-boot setup (NVIDIA driver, boot options)
+ConditionPathExists=!/var/lib/cathode/firstboot-done
+ConditionKernelCommandLine=!rd.live.image
+After=network-online.target akmods.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/cathode-firstboot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
