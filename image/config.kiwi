@@ -73,9 +73,8 @@
     <!-- ======================================================= bootstrap -->
     <packages type="bootstrap">
         <package name="filesystem"/>
-        <package name="basesystem"/>
         <package name="setup"/>
-        <package name="fedora-release-kde"/>
+        <package name="fedora-release-kde-desktop"/>
         <package name="glibc-langpack-en"/>
     </packages>
 
@@ -139,8 +138,8 @@
         <package name="kde-gtk-config"/>
         <package name="xdg-desktop-portal-kde"/>
         <package name="polkit-kde"/>
-        <package name="kwallet-pam"/>
-        <package name="systemsettings"/>
+        <package name="pam-kwallet"/>
+        <package name="plasma-systemsettings"/>
         <package name="kinfocenter"/>
         <package name="kmenuedit"/>
         <package name="spectacle"/>
