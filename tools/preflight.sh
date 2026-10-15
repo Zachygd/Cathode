@@ -16,6 +16,28 @@ if grep -q '^ID=fedora' /etc/os-release; then ok "Fedora $(. /etc/os-release; ec
 for cmd in kiwi-ng rpmbuild createrepo_c dnf5 xmllint; do
     if command -v "$cmd" >/dev/null; then ok "$cmd"; else bad "$cmd missing"; fi
 done
+# KIWI has to run on a real Fedora install. Inside toolbox/distrobox/podman
+# it can't mount, label SELinux files or create users in the image properly.
+if [ -f /run/.containerenv ] || [ -f /.dockerenv ] || systemd-detect-virt -cq 2>/dev/null; then
+    if [ "${CATHODE_ALLOW_CONTAINER:-0}" = 1 ]; then
+        warn "running inside a container (allowed by CATHODE_ALLOW_CONTAINER=1)"
+    else
+        bad "running inside a container (toolbox/distrobox?). Run the build in a normal terminal on the host"
+    fi
+else
+    ok "not in a container"
+fi
+# RPM 4.20+ creates the image's users and groups by running the HOST's
+# systemd-sysusers with --root. If it's missing, installing the very first
+# package (setup) fails with "%sysusers ... scriptlet failed, exit status 127".
+sysusers=$(rpm --eval '%{?__systemd_sysusers}' 2>/dev/null)
+if [ -z "$sysusers" ]; then
+    ok "rpm user creation helper disabled"
+elif [ -x "$sysusers" ]; then
+    ok "$sysusers"
+else
+    bad "$sysusers missing; install it with: sudo dnf install $sysusers"
+fi
 free_gb=$(df -BG --output=avail "$top" | tail -1 | tr -dc 0-9)
 if [ "${free_gb:-0}" -ge 25 ]; then ok "${free_gb} GB free"; else warn "only ${free_gb:-?} GB free here; a build needs about 25 GB"; fi
 

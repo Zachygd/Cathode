@@ -31,11 +31,14 @@ Konsole, KWrite and PCManFM-Qt are temporary until Cathode's own apps exist.
 
 ## Building the ISO
 
-Build on a Fedora 44 machine with internet and about 25 GB free.
+Build on a Fedora 44 machine with internet and about 25 GB free. Run it in
+a normal terminal on the computer itself, not inside a toolbox or distrobox
+container: KIWI needs the real system to mount filesystems, set SELinux
+labels and create the image's users.
 
 ```
 # one-time setup
-sudo dnf install kiwi-cli kiwi-systemdeps rpm-build createrepo_c libxml2
+sudo dnf install kiwi-cli kiwi-systemdeps rpm-build createrepo_c libxml2 /usr/bin/systemd-sysusers
 sudo dnf install \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-44.noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-44.noarch.rpm
